@@ -8,9 +8,9 @@ import java.util.Stack;
 
 public class UsingLists {
     public static void main(String[] args) {
-//        factoryMethods();
-//        arrayList();
-//        stack();
+        factoryMethods();
+        arrayList();
+        stack();
         linkedList();
     }
     public static void factoryMethods(){
