@@ -223,6 +223,19 @@ public class Main {
 		LocalDate dob = LocalDate.of(1992, 01, 04);
 		LocalDate today = LocalDate.now();
 		System.out.println("Age of Rishabh is " + ChronoUnit.YEARS.between(dob, today));
+
+
+
+//29. Convert the list in a map, so that even indexed item is key and odd indexed item is value
+		List<String> names = new ArrayList<>(Arrays.asList("Rishabh", "Anshul", "Abhishek", "Avinashi", "Rish"));
+		if(names.size() %2 == 0) {
+			Map<String, String> map = IntStream.range(0, names.size()).filter(i -> i % 2 == 0).boxed().collect(Collectors.toMap(names::get, c -> names.get(c + 1), (a, b) -> a, LinkedHashMap::new));
+            		System.out.println(map);
+        	} else {
+            		names.add("null");
+            		Map<String, String> map = IntStream.range(0, names.size()).filter(i -> i % 2 == 0).boxed().collect(Collectors.toMap(names::get, c -> names.get(c + 1), (a, b) -> a, LinkedHashMap::new));
+            		System.out.println(map);
+        	}
 	}
 
 	private static List<Integer> getRandomListOfNNumber(int n) {
