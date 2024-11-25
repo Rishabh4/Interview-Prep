@@ -23,7 +23,7 @@ public class Main {
 	public static void main(String[] args) {
 
 //1. Find unique characters in a word and announce the winner with most unique characters in the name 
-		List<String> names = new ArrayList<>(Arrays.asList("Rishabh", "Anshul", "Abhishek", "Avinashi"));
+		List<String> names = Arrays.asList("Rishabh", "Anshul", "Abhishek", "Avinashi");
 
 //		Converting into a map with name as key & number of unique characters as value
 		Map<String, Long> map = names.stream().collect(Collectors.toMap(Function.identity(),
@@ -227,12 +227,44 @@ public class Main {
 
 
 //29. Convert the list in a map, so that even indexed item is key and odd indexed item is value
-		List<String> names = new ArrayList<>(Arrays.asList("Rishabh", "Anshul", "Abhishek", "Avinashi", "Rish"));
+		List<String> names = Arrays.asList("Rishabh", "Anshul", "Abhishek", "Avinashi", "Rish");
 		if(names.size() %2 != 0) {
             		names.add("null");
         	}
 		Map<String, String> map = IntStream.range(0, names.size()).filter(i -> i % 2 == 0).boxed().collect(Collectors.toMap(names::get, c -> names.get(c + 1), (a, b) -> a, LinkedHashMap::new));
 		System.out.println(map);
+	}
+
+//30. Find the longest substring with non-repeating characters
+	public static String lengthOfLongestSubstring(String s) {
+	        // HashMap to store the most recent index of each character
+	        HashMap<Character, Integer> map = new HashMap<>();
+	        
+	        int maxLength = 0;
+	        int start = 0; // Left pointer for the sliding window
+		String str = "";
+	        
+	        // Iterate through the string with the right pointer
+	        for (int end = 0; end < s.length(); end++) {
+	            char currentChar = s.charAt(end);
+	            
+	            // If the character is already in the window, move the left pointer
+	            // to the right of the last occurrence of the current character
+	            if (map.containsKey(currentChar)) {
+	                start = Math.max(start, map.get(currentChar) + 1);
+	            }
+	            
+	            // Update or add the current character's index to the map
+	            map.put(currentChar, end);
+	            
+	            // Calculate the length of the current valid window
+		    if(maxLength < Math.max(maxLength, end - start + 1)) {
+			    maxLength = Math.max(maxLength, end - start + 1);
+			    str = s.substring(start, end+1);
+		    }
+	        }
+	        
+	        return str;
 	}
 
 	private static List<Integer> getRandomListOfNNumber(int n) {
