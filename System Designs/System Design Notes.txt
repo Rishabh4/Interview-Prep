@@ -1,0 +1,302 @@
+System Designs
+
+Imp question
+	Coding
+		Implement a BST in-order traversal - it is easily done using recursion.
+	Design
+		Number of routes and find the shortest path
+		Chess board game
+		LRU Hash
+		Youtube
+		Ola
+		Elasticsearch
+		Rate limiter
+
+Variuos things to be included in your system design that interviewer is looking for -
+1. Scalability	-	How scalable a system is, so that if sudden load increases, we should be able to scale our system horizontally to manage it.
+	System Partitioning
+	Data Normalizing
+	Data Partitioning / Sharding	
+	ACID
+		Atomicity	-	Either entire transaction succeeds or it fails.
+		Consistency	-	All DB rules are enforced or entire thing roles back, Ex. restriction on a column of negative value, but if someone tries to do so, it rolls back everything.
+		Isolation	-	No transaction affected by any other transaction that are still in progress.
+		Durability	-	Once the transaction is committed, it stays, even after the system crashes just after that.
+	CAP	- We can have any 2 of them but not all 3.
+		Consistency			-	How quickly we get the data back after writing in a DB.
+		Availability		-	No Single point of failure that can go down.
+		Partition Tolerance	-	Horizontally scaling the system.	
+2. Caching	-	How fast a system can respond with the help of this technique. If there are more reads than writes then this would help significantly or else this is of no use, because whenever we write in, cache got invalidated and it won't actually help.
+	Horizontally distributed caches
+	Client Hashes requests for a DB call and send it to respective Cache host/server
+	In-memory
+	More reads than writes
+	Expiration policy should be like invalidating the cache once the data is written to the DB, since now cache holds the stale data but still need to set some time of expiration. Don't make it too short since it won't be effective.
+		LRU  - Least Recently Used		- Oldest thing that we have used would be kicked out. Best for big cache.
+		LFU  - Least Frequently Used	- How often a given key is hit over some period of time. Best for small cache.
+		FIFO - First in Fist out		- Whatever enters the cache first would be the first to go out as well.
+		Cache miss - What stays in a cache and what actually hits the DB.
+	Hotspots
+	Cold start - When system restarts or the first time cache was introduced, all the traffic goes to DB directly. For this warm the cache before you expose the system so that cache can handle the load instead of directly hitting the db. Probably you can run the previous day logback so that cache gets warmed up and is ready to serve.
+	Examples - Memcached, Redis, Ncache, Ehcache, ElastiCache
+3. CDN(Content Delivery Networks)	-	We can put the static content on CDN which will be synchronized to local regions to serve the content globally and fast. Sometimes it offers limited computation capabilities. There are systems that can apply machine learning models locally through CDN. Once they have a trained model, we can distribute them.
+	Geographically Distributed
+	Local Hosting of
+		HTML
+		JS
+		CSS
+		Images
+	Mainly used for static content
+	It is expensive. Someone has to pay for
+		all the servers
+		internet traffic between all those different locations
+	Quickly offers your information to people around the world
+	Various CDN Providers
+		AWS CloudFront
+		Google Cloud CDN
+		Microsoft Azure CDN
+		Legacy CDN systems:-
+			Akamai
+			CloudFlare
+4. Resiliency	-	How to handle the systems when things go wrong.
+	Use geo-routing (using some sort of DNS trick to actually figure out where to send a request to locally). Now, if any region goes down, this geo-routing would transfer the load to other regions.
+5. Scale your data	-
+	Distributed Storage solutions
+		Services for scalable , available, secure, fast object storage
+		Use cases - Data lakes, Websites, Backups, Big Data
+		Durability - like S3 provides 99.999999999% durability (11 9's)
+		Latency - How fast your system can respond to a request. 3 9's i.e. 99.9% of the times we would return the response in 100 ms
+		Ex-
+			Amazon S3 - it has Glacier to archive the data and Glacier is also cheap, hot/cool/cold storage
+			Google Cloud Storage
+			Microsoft Azure
+			Hadoop HDFS - Typically self-hosted. Also known as private cloud
+			Consumer-oriented storage solutions - 
+				Dropbox
+				Box
+				Google Drive
+				iCloud
+				OneDrive
+				- Not relevant to system designs
+6. Data Structures
+	a. Linked List
+		Singly Linked List
+			Grows Dynamically (as opposed to an array).
+			Access is O(n) (So, not efficient for search).
+			Insert at head is O(1) since it involves a single operation of adding an element and changing the next pointer to the current head and change the head to new inserted element.
+			Insert at end is O(n) since I need to traverse the whole linked list to find the end and then insert an object.
+			Best for use cases that involve sequential access.
+			Also good for Stacks (LIFO), or queues (FIFO) only if you keep track of the tail as well.
+			Takes less memory than doubly link list since here we are only taking care of next element, insted of keeping the pointer to previous as well.
+		Doubly Linked List
+			Each node has a "next" and "prev" pointer.
+			Inserts at front or back is O(1).
+			Access is O(n) (But could be faster in practice since we can start from end as well).
+			Useful for Deques.
+			Also good for MRU Caches - Always move most recent access to the head.
+	b. Binary Tree
+		Each element has a left and right child.
+		If left and right are ordered then it is a binary search tree, which is very useful for search.
+		Access is O(log(n)) on average(since it is perfectly balanced tree so we cut the half way down), & O(n) worst case.
+		Insert / delete also O(log(n)) on average as you need to do another search to rearrange things & O(n) worst case.
+		Mostly used in cases where you need to do in-order traversals.
+	c. Hash Table
+		A "hash function" quickly maps some key to a bucket.
+		Now that bucket is searched for the key's value.
+		Hash collisions occurs when more than one key maps to the same bucket. In same bucket they connects via Linked List or it can be BST as well.
+		Insert, lookups and deletions are O(1) but O(n) in worst case.
+		Used when fast lookups are needed.
+		Think in terms of using a hash table to decide which on which db partition set you want to save the data.
+	d. Graphs
+		Consists of nodes (vertices) that can be connected in arbitrary ways (edges).
+		Ex. friends in a Social Network, Paths in a city, Networks in general.
+		Traversal Strategies include BFS & DFS, where BFS is more common one.
+		BFS - Search both vertices at a time until we find the last node.
+		DFS - Searches one side of the node till end & then goes back and finds the next path.
+		Access is O(V+E)
+7. Algorithms
+	a. Searching
+		i. Linear Search
+			Start with an Array or List.
+			It can be sorted or unsorted.
+			Start with the beginning & keep going until you find the element.
+			O(n) is the time complexity.
+			Not best when search is important.
+		ii. Binary Search
+			Start with a sorted Array or List.
+			Start at the middle, split the array in 2.
+			If the element that we are searching is bigger, we take the second half, or else we take the first half and repeat until the element is found.
+			O(n) is the time complexity.
+	b. Sorting
+		i. Insertion Sort - Traverse the list and try to find out the right placce where to insert the item in. Best case is O(n) and worst case is O(n^2). Its okay for small or already sorted list.
+		ii. Merge Sort - O(n log(n)). It scales well to the very large lists.
+		iii. Quick Sort - O(n log(n)) for average case, but O(n^2) is worst case due to poor choice of a pivot point. There are some complex implementations to avoid that. And hence it can be a good alternative to Merge Sort.
+		Iv. Bubble Sort - O(n^2), Simple but inefficient.
+8. Document Searching
+	a. Search & Information Retrieval
+		Start with forward index of keywords in each document.
+			Problems - Capitalization, spaces, punctuation, offensive terms, phrases.
+			Other signals of relevance can also be included in addition to position (formatting, etc)
+		Generate inverted index that maps keywords to document.
+		Now rank the documents maybe like number of appearance is coming first, then earlier appearance in the document is coming, and so on..
+	
+	b. TF-IDF (Term Frequency - Inverse Document Frequency): Document Search
+		Important data for search - figures out what terms are most relevant for a document.
+		Sounds fancy, but it is one of the oldest and most basic search algo.
+		Term Frequency - How often a word occurs in a document, which means that word is important for the document's meaning.
+		Document Frequency - How often a word occurs in a set of document.
+		
+		so relevancy of a word to a document might be-
+			Term Frequency / Document Frequency
+		Or Term Frequency * Inverse Document Frequency
+		
+		Applying TF-IDF to search:-
+			Compute TF-IDF for every word in a corpus.
+			For a given search word, sort the documents by their TF-IDF score for that word.
+			Display the results.
+
+	c. PageRank: Searching the web
+		This is also outdated
+	Note:- We are using deep learning for ranking in search applications. In modern times, PageRank & TF-IDF aren't actually used a lot.
+9. Message Queues as a scaling tool:-
+	Publisher/Producer ------> Messages -------> Subscribers
+	Decouples Producers & Consumers.
+	So if consumers get backed up, that's okay, data will not be lost.
+	Ex. Amazon SQS (Simple Queue Service)
+	This is different from streaming data (generally real-time, massive data), ex - Kafka & Apache Spark Streaming
+10. Data Analytics
+	Apache Spark
+		Distributed processing framework for big data. Or Distributed Analytics Tool. Or Distributed Data Processing Tool.
+		In-memory caching, optimized query execution.
+		Replacement of MapReduce(google's old technology).
+		Takes the input from user and tries to find the data from HDFS while taking out the data from HDFS, it parallely process it on distributed data and collects/combines the final answer to send it back.
+		We can also run Spark SQL via Java/Python/R language to get the data, and it will automatically finds the distributed data and finally collects the data.
+		Can be used for real-time analytics (by using the output that Spark produces into some graphing tool maybe like Spark Streaming).
+		Also used for ML.
+		Also supports & analyzes Graphs DS.
+		For Streaming, Spark uses structured streaming, which is real-time solution. Can be integrated with Kinesis or Kafka or Amazon EMR.
+		Spark is not meant for OLTP(Online Transaction Processing). It's not meant for exposing your data in real-time to the outside world.
+		It is an important tool	for processing & streaming & transforming massive amounts of data either in a batch process or in real time.
+	How Spark works:-
+		If we dont want to rely on hadoop's cluster then we can use its own cluster management.
+		Driver Program runs in a Spark Context where Spark gives wide variety of API for transforming and analyzing the data in parallel.
+		Now it communicates with cluster manager either YARN(Yet Another Resource Negotiator) or Spark Cluster.
+		Then, It calls various Executors which has cache & task that has to be executed.
+
+Design a data warehouse for logs with AWS
+	ServerLogs -> Kinesis -> S3 -> Glue -> Athena			-	Serverless
+	ServerLogs -> Kinesis -> S3 -> Redshift -> AuickSight	-	Managed
+
+Hybrid Clouds
+	Combine your own DC (on-premises or private cloud) with a public cloud(AWS, Google, Azure).
+	Allow easiy scaling of on-premises systems.
+	Allows for regulations that requires certain data to be on-premises.
+	Requires bridges between your DC and cloud. Where specifics can vary as per the cloud providers.
+	Multi-Cloud - more than one public cloud provider.
+
+Cloud Name				AWS					Google Cloud							Azure
+Storage					S3					Cloud Storage						Disk, Blob or Data Lake Storage
+Compute					EC2					Compute Engine						Virtual Machines
+NoSQL				  DynamoDB				Bigtable							CosmosDB/Table Storage
+Containers			Kubernetes/ECR/ECS		Kubernetes							Kubernetes
+Data Streams		  Kinesis				DataFlow							Stream	Analytics
+Spark/Hadoop	  EMR(Elastic MapReduce)	Dataproc							Databricks
+Data warehouse		  Redshift				BigQuery							Azure SQL/DB
+Caching				ElastiCache(Redis)		Memorystore(Redis or Memcached)		Redis
+
+Amazon S3(Simple Storage Service) - Infinite storage provided by AWS that we could use to store the raw and unstructured data. Where we pay for the storage we use. Also provides 11 9's durability i.e. 99.999999999%.
+Serverless Servers - We dont get charged on the basis of server usage, instead we got charged on the basis of usage of transactions.
+	Amazon Lambdas - Put the code snippet and it will automatically run it.
+	Amazon Kinesis - Streaming data from one point to another.
+	Amazon Glue - Its job is to crawl the unstructured data in your data lake & sort of extract a schema around it.
+	Amazon Athena - Allows us to query the data from data lake (Amazon Glue) using SQL.
+	Amazon Redshift - Allows us to query the data from distributed data warehouse.
+	Amazon ElastiCache - Fully-managed Redis or Memcached.
+	Amazon SQS (Simple Queue Service) - Single-Consumer message queue, so there would be only one consumer of the data that is published.
+	Amazon QuickSight - Dashboard Visualization of the data that is feed into it.	
+
+
+Divide the vague problem into concrete steps.
+Like if they are asking us to Design Youtube
+	Our questions could be-
+		What parts of youtube you want me to design, since they have recommendations, editing content, channels, advertisements, managing payments to people. Is it just storing and serving the videos ?
+		How much videos are we talking about?
+		How much traffic are we talking about?
+		What cost constraints are we keeping here?
+		Ask who all are the customer?
+	Think out loud, let the interviewer see what you are thinking and how you are approaching to a problem ?
+	Working Backwards - Means start with the customer experience to backend.
+		CLARIFY THE REQUIREMENTS of what we need to design.
+		Indentify WHO are the customers?
+		WHAT are their use cases?
+		WHICH use cases do you need to concern yourself with
+			Because we can't design whole YouTube in just 20 mins.
+		If Customers experience are kept first then that shows that we are interested in making customers happy that would bring business for the company and we would be ending up with a nice solution.
+	Defining Requirements
+		Defining Scaling Requirements
+			Nail down the scale of the system. Is it 100 of users ? Millions ?
+				This will inform us about horizontal partitioning.
+				How often are users coming? What transaction rate do you need to support ?
+			Also define the scale of the data.
+				100s of videos ? Millions ?
+			YouTube Example - millions of users, millions of videos.
+				You will need every trick of horizontally scaled servers & data storage.
+			Some internal tool might not need this level of complexity, however:-
+				Always prefer the simplest solution that will work.
+				Vertical Scaling still has its place.
+		Defining Latency Requirements
+			How fast is fast enough?
+				This information is needed for caching and CDN usage?
+				Caching is also a tool for scaling, however - it reduces load on services & data stores.
+				Try to express this in SLA Language (i.e. 100ms at three 9's for a given operation)
+			YouTube Example
+				Caching video recommendations
+				Caching video metadata, descriptions, etc.
+		Defining Availability Requirements
+			How much downtime you can tolerate ?
+				Is being down threat to a business ? Or just an inconvenience ?
+				If the former, you need to design for high availability
+					Opt for redundancy across many regions / racks / DCs rather for simplicity or frugality.
+				Also mention single point of failure
+		They might not tell you
+			Works backwards from the customer to estimate what sorts of requirements make sense from their standpoint.
+			"Back of the envelope" calculations may be needed. How many users & videos "DOES" YouTube have ? You can make an educated guess.
+			Get buy-in from the interviewer before proceeding to design the system.
+	Design Strategies
+		Think out Loud
+			Dont just calm up for 10 mins.
+			Clarify requirements, define constraints what you need to build.
+			Think out loud about the solutions you're considering to meet those requirements.
+			Give the interviewer a chance to steer you in a different direction before you start diving into details.
+			You dont know how much time you have for this part of the interview, so make every minute count.
+		Sketching out your design
+			Start with the high level components.
+				Ex.
+					Client
+					Web Servers
+					Recommendation Servers
+					Caching the services
+					DB
+			Work backwards if you can
+			Then flesh out each components as time permits
+				How do they scale?
+				How are they distributed for availability?
+			Let the interviewer talk, listen to them. They may be trying to steer you in the right direction.
+			Identify bottlenecks, maintenance, costs, concerns as you go - show that you understand the tradeoffs of the choices you are making.
+			Notation and format generally doesn't matter much, as long as you can communicate what it means.
+		Be Honest
+			Don't pretend to know stuff you don't know.
+			If you're steered into a direction you're unfamiliar with, say so.
+			But don't just give up! Try to think through it, work with the interviewer to come up with a solution collaboratively.
+			This is an opportunity to demonstrate grit, perseverance and the ability to  work with others - which is more important than anything.
+		Defending your design
+			The interviewer will try to poke holes in your design.
+			What happens if X fails?
+			What happens if we get a sudden surge of traffic/data?
+			Did you meet the scaling & availability requirements you defined?
+			Does your system meets all of the use cases discussed?
+			How would you make it better?
+			How would you optimize or simplify it?
+			What is its operational burden? How will you monitor it?
+			DON'T GET DEFENSIVE - Take feedback constructively.
+			
