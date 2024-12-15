@@ -1,1 +1,4 @@
 https://github.com/in28minutes/spring-interview-guide
+https://github.com/navinreddy20/Javacode
+https://github.com/navinreddy20/spring6-course
+https://github.com/navinreddy20/MicroserviceTutorials
